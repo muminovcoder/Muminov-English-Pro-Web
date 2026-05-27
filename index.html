@@ -1,371 +1,688 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Academic English vocabulary — 11 units, 1200+ words with pronunciation, definitions, examples and synonyms.">
-    <meta name="color-scheme" content="dark light">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Academic EN">
-    <title>Academic English — Learning Hub</title>
-    <link rel="manifest" href="/manifest.webmanifest">
-    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icons/icon.svg">
-    <!-- Optional: set API URL when not using npm start (default http://localhost:3000 for file://) -->
-    <!-- <meta name="api-base" content="http://localhost:3000"> -->
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muminov English Pro - Academic English Learning Hub</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .online-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Auth Section */
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 200px);
+            padding: 40px 20px;
+        }
+
+        .auth-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-title {
+            font-size: 28px;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #f1f5f9;
+        }
+
+        .auth-subtitle {
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            padding: 40px 0;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-text {
+            color: #94a3b8;
+            font-size: 18px;
+        }
+
+        /* Books Grid */
+        .books-section {
+            margin-top: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #f1f5f9;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .book-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-card.selected {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .book-level {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .book-title {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #f1f5f9;
+        }
+
+        .book-author {
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .book-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .book-check {
+            display: none;
+            color: #22c55e;
+            font-size: 24px;
+            margin-top: 16px;
+        }
+
+        .book-card.selected .book-check {
+            display: block;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            color: #f1f5f9;
+        }
+
+        .btn-logout {
+            padding: 8px 20px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(96, 165, 250, 0.3);
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error Message */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 24px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+            }
+
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
-    <div id="pwaInstallBar" class="pwa-install-bar is-hidden" role="region" aria-label="Install app">
-        <p class="pwa-install-text">Install on your phone for the best experience.</p>
-        <div class="pwa-install-actions">
-            <button type="button" class="btn btn-primary" id="pwaInstallBtn">Install app</button>
-            <button type="button" class="btn" id="pwaInstallDismiss" aria-label="Dismiss">×</button>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">📚 Muminov English Pro</div>
+                <div class="online-indicator">
+                    <div class="pulse"></div>
+                    <span id="onlineCount">0</span> learners online
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <div id="serverBanner" class="server-banner is-hidden" role="alert">
-        <strong>Server ishlamayapti.</strong>
-        Terminalda: <code>npm install</code> → <code>npm start</code> →
-        <a href="http://localhost:3000">http://localhost:3000</a> oching.
-    </div>
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
 
-    <div class="app-shell">
-        <!-- Home -->
-        <section id="homeView" class="is-hidden" aria-label="Home">
-            <header class="profile-bar is-hidden" id="profileBar">
-                <div class="profile-bar-main">
-                    <span class="profile-avatar" id="profileAvatar" aria-hidden="true">?</span>
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage"></div>
+
+        <!-- Auth Section -->
+        <section class="auth-section" id="authSection">
+            <div class="auth-card">
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Enter your nickname to continue learning</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="username">Nickname</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            class="form-input" 
+                            placeholder="Enter your nickname"
+                            required
+                            minlength="3"
+                        >
+                    </div>
+                    <button type="submit" class="btn" id="loginBtn">
+                        Start Learning
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Dashboard -->
+        <section class="dashboard" id="dashboard">
+            <!-- Profile -->
+            <div class="profile-section">
+                <div class="profile-header">
                     <div>
-                        <p class="profile-name" id="profileName">@user</p>
-                        <p class="profile-meta" id="profileMeta"></p>
-                        <p class="profile-book" id="profileBook">—</p>
-                        <p class="profile-coins" id="profileCoins">💰 Coins: 0</p>
+                        <h2 class="profile-name">Welcome, <span id="userName">Student</span>! 👋</h2>
+                        <p style="color: #94a3b8; margin-top: 4px;">Choose your learning path</p>
                     </div>
-                </div>
-                <div class="profile-bar-actions">
-                    <button type="button" class="btn btn-sm" id="btnChangeBook" aria-label="Change vocabulary book">Change book</button>
-                </div>
-            </header>
-
-            <div class="online-widget online-widget--home" data-online-widget aria-live="polite">
-                <span class="online-pulse" aria-hidden="true"></span>
-                <div class="online-widget-body">
-                    <span class="online-count" data-online-count>—</span>
-                    <span class="online-label" data-online-label>learners online now</span>
-                </div>
-                <span class="online-badge">Live</span>
-            </div>
-
-            <div class="home-hero">
-                <span class="home-badge">✦ Academic English</span>
-                <h1>Your learning hub</h1>
-                <p>Choose a module to begin. Works on Android &amp; iPhone — add to home screen for app-like experience.</p>
-                <div class="home-stats" aria-hidden="true">
-                    <span class="home-stat"><strong>11</strong> units</span>
-                    <span class="home-stat"><strong>1,190+</strong> words</span>
-                    <span class="home-stat"><strong>15</strong> tenses</span>
+                    <button class="btn-logout" onclick="logout()">Logout</button>
                 </div>
             </div>
 
-            <div class="module-grid">
-                <article
-                    id="vocabModuleCard"
-                    class="module-card module-card--vocab"
-                    role="button"
-                    tabindex="0"
-                    aria-label="Open Vocabulary — Units 1 to 11"
-                >
-                    <span class="module-icon" aria-hidden="true">📘</span>
-                    <h2>Vocabulary</h2>
-                    <p>Units 1–11 with IPA pronunciation, clear definitions, example sentences, and synonyms. Search, filter, and listen with text-to-speech.</p>
-                    <div class="module-meta">
-                        <span class="meta-tag">11 units</span>
-                        <span class="meta-tag">1,100+ words</span>
-                        <span class="meta-tag">Text-to-speech</span>
-                    </div>
-                    <span class="module-arrow" aria-hidden="true">→</span>
-                </article>
-
-                <article
-                    id="grammarModuleCard"
-                    class="module-card module-card--grammar"
-                    role="button"
-                    tabindex="0"
-                    aria-label="Open Grammar — Tenses and Units 1 to 11"
-                >
-                    <span class="module-icon" aria-hidden="true">📝</span>
-                    <h2>Grammar</h2>
-                    <p>All English tenses with clear rules and examples, plus essential grammar from Units 1–11.</p>
-                    <div class="module-meta">
-                        <span class="meta-tag">15 tenses</span>
-                        <span class="meta-tag">11 units</span>
-                        <span class="meta-tag">English only</span>
-                    </div>
-                    <span class="module-arrow" aria-hidden="true">→</span>
-                </article>
-
-                <article
-                    id="progressModuleCard"
-                    class="module-card module-card--progress module-card--compact"
-                    role="button"
-                    tabindex="0"
-                    aria-label="Open My Progress"
-                >
-                    <span class="module-icon" aria-hidden="true">📊</span>
-                    <h2>My Progress</h2>
-                    <p>Track your coins, profile, and selected vocabulary book.</p>
-                    <div class="module-meta">
-                        <span class="meta-tag">Coins</span>
-                        <span class="meta-tag">Profile</span>
-                        <span class="meta-tag">Book</span>
-                    </div>
-                    <span class="module-arrow" aria-hidden="true">→</span>
-                </article>
-            </div>
-
-            <div class="home-units">
-                <div class="home-units-head">
-                    <h2 class="home-units-title">Quick access</h2>
-                    <p class="home-units-lead">Jump straight to any unit vocabulary.</p>
-                </div>
-                <div class="unit-chips home-unit-chips" id="homeUnitChips" role="group" aria-label="Open vocabulary by unit"></div>
-            </div>
-
-            <p class="home-footer">
-                PWA · Android &amp; iOS · Press <kbd>/</kbd> to search
-            </p>
-        </section>
-
-        <!-- Vocabulary -->
-        <section id="vocabView" class="module-page module-page--vocab" aria-label="Vocabulary">
-            <header class="module-page-hero">
-                <button type="button" class="btn-back" id="btnBack" aria-label="Back to home">
-                    ← Home
-                </button>
-                <div class="module-page-hero-main">
-                    <span class="module-page-icon" aria-hidden="true">📘</span>
-                    <div class="module-page-titles">
-                        <h1>Vocabulary</h1>
-                        <p class="module-page-tagline">Academic words with IPA, definitions, examples &amp; synonyms</p>
-                        <span class="vocab-book-label" id="vocabBookLabel"></span>
-                    </div>
-                </div>
-                <div class="module-page-hero-actions">
-                    <button type="button" class="btn btn-sm btn-ghost" id="btnVocabChangeBook" aria-label="Change vocabulary book">Change book</button>
-                    <span class="stats-pill" id="globalStats" aria-live="polite"></span>
-                </div>
-            </header>
-
-            <div class="module-body">
-                <div class="filter-panel toolbar module-toolbar" role="search">
-                    <div class="toolbar-block">
-                        <h2 class="toolbar-heading">Search &amp; filters</h2>
-                        <div class="toolbar-row">
-                            <div class="search-wrap">
-                                <span class="search-icon" aria-hidden="true">🔍</span>
-                                <input
-                                    type="search"
-                                    id="search"
-                                    placeholder="Search word, definition, example, or synonym…"
-                                    autocomplete="off"
-                                    aria-label="Search vocabulary"
-                                >
-                                <button type="button" class="search-clear" id="searchClear" aria-label="Clear search">×</button>
-                            </div>
-                            <select id="unitFilter" aria-label="Filter by unit">
-                                <option value="all">All units</option>
-                                <option value="1">Unit 1: Personality</option>
-                                <option value="2">Unit 2: Time &amp; History</option>
-                                <option value="3">Unit 3: Conformity &amp; Society</option>
-                                <option value="4">Unit 4: Science &amp; Chemistry</option>
-                                <option value="5">Unit 5: Education &amp; Careers</option>
-                                <option value="6">Unit 6: Advertising &amp; Persuasion</option>
-                                <option value="7">Unit 7: Travel &amp; Culture</option>
-                                <option value="8">Unit 8: Society &amp; Government</option>
-                                <option value="9">Unit 9: Nature &amp; Conservation</option>
-                                <option value="10">Unit 10: Rocket Science &amp; Space</option>
-                                <option value="11">Unit 11: Technology &amp; Innovation</option>
-                            </select>
-                            <select id="posFilter" aria-label="Filter by part of speech">
-                                <option value="all">All parts of speech</option>
-                            </select>
-                            <select id="sortBy" aria-label="Sort words">
-                                <option value="default">Sort: Unit order</option>
-                                <option value="az">Sort: A → Z</option>
-                                <option value="za">Sort: Z → A</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="toolbar-block">
-                        <h2 class="toolbar-heading">Units</h2>
-                        <div class="unit-chips" id="unitChips" role="group" aria-label="Quick unit filter"></div>
-                    </div>
-
-                    <div class="toolbar-block toolbar-block--actions">
-                        <h2 class="toolbar-heading">Display</h2>
-                        <div class="btn-group">
-                            <button type="button" class="btn is-active" id="btnSynonyms">Synonyms: On</button>
-                            <button type="button" class="btn" id="btnCompact">View: Full</button>
-                            <button type="button" class="btn btn-primary" id="btnReset">Reset filters</button>
-                            <button type="button" class="btn" id="btnTop">↑ Top</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="module-content">
-                    <div class="loading-bar" id="loadingBar" aria-hidden="true"><span></span></div>
-                    <p class="results-info module-results" id="resultsText" aria-live="polite">Loading vocabulary…</p>
-                    <main id="vocabContainer" class="module-main"></main>
+            <!-- Books -->
+            <div class="books-section">
+                <h2 class="section-title">📖 Available Books</h2>
+                <div class="books-grid" id="booksGrid">
+                    <!-- Books will be loaded here -->
                 </div>
             </div>
         </section>
+    </main>
 
-        <!-- Grammar -->
-        <section id="grammarView" class="module-page module-page--grammar" aria-label="Grammar">
-            <header class="module-page-hero">
-                <button type="button" class="btn-back" id="btnGrammarBack" aria-label="Back to home">
-                    ← Home
-                </button>
-                <div class="module-page-hero-main">
-                    <span class="module-page-icon" aria-hidden="true">📝</span>
-                    <div class="module-page-titles">
-                        <h1>Grammar</h1>
-                        <p class="module-page-tagline">English tenses and unit grammar — rules &amp; examples</p>
-                    </div>
+    <script>
+        // API Base URL
+        const API_URL = window.location.origin;
+        
+        // State
+        let token = localStorage.getItem('token');
+        let currentUser = null;
+
+        // DOM Elements
+        const authSection = document.getElementById('authSection');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const booksGrid = document.getElementById('booksGrid');
+        const onlineCount = document.getElementById('onlineCount');
+        const userName = document.getElementById('userName');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (token) {
+                checkAuth();
+            }
+            updateOnlineCount();
+            setInterval(updateOnlineCount, 30000); // Update every 30 seconds
+        });
+
+        // Show error
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            
+            if (!username || username.length < 3) {
+                showError('Nickname must be at least 3 characters');
+                return;
+            }
+
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Loading...';
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+
+                token = data.token;
+                currentUser = data.user;
+                localStorage.setItem('token', token);
+                
+                showDashboard();
+                sendHeartbeat();
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Start Learning';
+            }
+        });
+
+        // Check auth
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    showDashboard();
+                    sendHeartbeat();
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                logout();
+            }
+        }
+
+        // Show dashboard
+        async function showDashboard() {
+            authSection.style.display = 'none';
+            dashboard.style.display = 'block';
+            
+            if (currentUser) {
+                userName.textContent = currentUser.username;
+            }
+
+            await loadBooks();
+        }
+
+        // Load books
+        async function loadBooks() {
+            try {
+                const response = await fetch(`${API_URL}/api/books`);
+                const data = await response.json();
+
+                if (data.books && data.books.length > 0) {
+                    renderBooks(data.books);
+                } else {
+                    // Sample books if API returns empty
+                    renderBooks(getSampleBooks());
+                }
+            } catch (error) {
+                console.error('Failed to load books:', error);
+                renderBooks(getSampleBooks());
+            }
+        }
+
+        // Get sample books
+        function getSampleBooks() {
+            return [
+                {
+                    id: 1,
+                    title: "Vocabulary for IELTS Advanced",
+                    author: "Cambridge University",
+                    level: "Advanced",
+                    description: "Comprehensive vocabulary building for IELTS exam preparation"
+                },
+                {
+                    id: 2,
+                    title: "Academic English Grammar",
+                    author: "Oxford Press",
+                    level: "Intermediate",
+                    description: "Essential grammar rules for academic writing and speaking"
+                },
+                {
+                    id: 3,
+                    title: "Business English Communication",
+                    author: "Pearson Education",
+                    level: "Intermediate",
+                    description: "Professional English for business environments"
+                },
+                {
+                    id: 4,
+                    title: "English Pronunciation Master",
+                    author: "BBC Learning",
+                    level: "Beginner",
+                    description: "Master English pronunciation and intonation"
+                }
+            ];
+        }
+
+        // Render books
+        function renderBooks(books) {
+            booksGrid.innerHTML = books.map(book => `
+                <div class="book-card" onclick="selectBook(${book.id})" id="book-${book.id}">
+                    <span class="book-level">${book.level}</span>
+                    <h3 class="book-title">${book.title}</h3>
+                    <p class="book-author">by ${book.author}</p>
+                    <p class="book-description">${book.description}</p>
+                    <div class="book-check">✓ Selected</div>
                 </div>
-                <span class="stats-pill" id="grammarStats" aria-live="polite"></span>
-            </header>
+            `).join('');
+        }
 
-            <div class="module-body">
-                <div class="grammar-controls">
-                    <nav class="grammar-nav" id="grammarNav" aria-label="Grammar sections">
-                        <a href="#grammar-tenses" class="grammar-nav-link is-active" data-section="tenses">English tenses</a>
-                        <a href="#grammar-units" class="grammar-nav-link" data-section="units">Units 1–11</a>
-                    </nav>
+        // Select book
+        async function selectBook(bookId) {
+            if (!token) return;
 
-                    <div class="grammar-toolbar filter-panel module-toolbar" role="search">
-                        <h2 class="toolbar-heading">Search</h2>
-                        <div class="grammar-toolbar-row">
-                            <div class="search-wrap">
-                                <span class="search-icon" aria-hidden="true">🔍</span>
-                                <input
-                                    type="search"
-                                    id="grammarSearch"
-                                    placeholder="Search tense, rule, or example…"
-                                    autocomplete="off"
-                                    aria-label="Search grammar"
-                                >
-                                <button type="button" class="search-clear" id="grammarSearchClear" aria-label="Clear search">×</button>
-                            </div>
-                            <select id="grammarUnitFilter" aria-label="Filter unit grammar" class="grammar-unit-select is-hidden">
-                                <option value="all">All units</option>
-                                <option value="1">Unit 1: Personality</option>
-                                <option value="2">Unit 2: Time &amp; History</option>
-                                <option value="3">Unit 3: Conformity &amp; Society</option>
-                                <option value="4">Unit 4: Science &amp; Chemistry</option>
-                                <option value="5">Unit 5: Education &amp; Careers</option>
-                                <option value="6">Unit 6: Advertising &amp; Persuasion</option>
-                                <option value="7">Unit 7: Travel &amp; Culture</option>
-                                <option value="8">Unit 8: Society &amp; Government</option>
-                                <option value="9">Unit 9: Nature &amp; Conservation</option>
-                                <option value="10">Unit 10: Rocket Science &amp; Space</option>
-                                <option value="11">Unit 11: Technology &amp; Innovation</option>
-                            </select>
-                            <button type="button" class="btn btn-primary" id="btnGrammarTop">↑ Top</button>
-                        </div>
-                    </div>
-                </div>
+            try {
+                const response = await fetch(`${API_URL}/api/books/select`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ bookId })
+                });
 
-                <div class="module-content">
-                    <p class="results-info module-results" id="grammarResultsText" aria-live="polite"></p>
-                    <main id="grammarContainer" class="module-main"></main>
-                </div>
-            </div>
-        </section>
+                if (response.ok) {
+                    // Update UI
+                    document.querySelectorAll('.book-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    document.getElementById(`book-${bookId}`).classList.add('selected');
+                    
+                    // Show success message
+                    const book = document.querySelector(`#book-${bookId} .book-title`).textContent;
+                    showError(`✅ Successfully selected: ${book}`);
+                    errorMessage.style.background = 'rgba(34, 197, 94, 0.1)';
+                    errorMessage.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                    errorMessage.style.color = '#22c55e';
+                }
+            } catch (error) {
+                console.error('Failed to select book:', error);
+                showError('Failed to select book. Please try again.');
+            }
+        }
 
-        <!-- My Progress -->
-        <section id="progressView" class="module-page module-page--progress is-hidden" aria-label="My Progress">
-            <header class="module-page-hero">
-                <button type="button" class="btn-back" id="btnProgressBack" aria-label="Back to home">
-                    ← Home
-                </button>
-                <div class="module-page-hero-main">
-                    <span class="module-page-icon" aria-hidden="true">📊</span>
-                    <div class="module-page-titles">
-                        <h1>My Progress</h1>
-                        <p class="module-page-tagline">Your profile, coins, and study settings</p>
-                    </div>
-                </div>
-            </header>
+        // Update online count
+        async function updateOnlineCount() {
+            try {
+                const response = await fetch(`${API_URL}/api/presence/online`);
+                const data = await response.json();
+                onlineCount.textContent = data.count || 0;
+            } catch (error) {
+                console.error('Failed to update online count:', error);
+            }
+        }
 
-            <div class="progress-dashboard">
-                <div class="progress-highlight">
-                    <div class="progress-highlight-icon" aria-hidden="true">💰</div>
-                    <div>
-                        <span class="progress-highlight-label">Total coins</span>
-                        <span class="progress-highlight-value" id="progressCoins">0</span>
-                    </div>
-                </div>
+        // Send heartbeat
+        async function sendHeartbeat() {
+            if (!token) return;
 
-                <div class="progress-grid">
-                    <article class="progress-card">
-                        <span class="progress-card-icon" aria-hidden="true">📚</span>
-                        <h2 class="progress-card-title">Vocabulary book</h2>
-                        <p class="progress-card-value" id="progressBook">Not selected</p>
-                        <p class="progress-card-hint">The book you are currently studying from.</p>
-                    </article>
-                    <article class="progress-card progress-card--action">
-                        <span class="progress-card-icon" aria-hidden="true">⚙️</span>
-                        <h2 class="progress-card-title">Study settings</h2>
-                        <p class="progress-card-hint">Switch to a different vocabulary book anytime.</p>
-                        <button type="button" class="btn btn-primary btn-block" id="btnProgressChangeBook">Change vocabulary book</button>
-                    </article>
-                </div>
+            try {
+                await fetch(`${API_URL}/api/presence/heartbeat`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            } catch (error) {
+                console.error('Heartbeat failed:', error);
+            }
 
-                <p class="progress-footer-note">Your progress is saved to your profile when you are connected to the server.</p>
-            </div>
-        </section>
-    </div>
+            // Send heartbeat every 25 seconds
+            setTimeout(sendHeartbeat, 25000);
+        }
 
-    <!-- Vocabulary book picker -->
-    <div id="bookModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="bookModalTitle">
-        <div class="modal-backdrop"></div>
-        <div class="modal-panel">
-            <h2 id="bookModalTitle">Choose your vocabulary book</h2>
-            <p class="modal-lead">Which book do you want to study? Your choice is saved to your profile.</p>
-            <div id="bookModalList" class="book-modal-list"></div>
-            <p id="bookModalError" class="auth-error" role="alert"></p>
-            <div class="modal-actions">
-                <button type="button" class="btn" id="bookModalCancel">Cancel</button>
-                <button type="button" class="btn btn-primary" id="bookModalConfirm">Continue</button>
-            </div>
-        </div>
-    </div>
+        // Logout
+        function logout() {
+            token = null;
+            currentUser = null;
+            localStorage.removeItem('token');
+            authSection.style.display = 'flex';
+            dashboard.style.display = 'none';
+            document.getElementById('username').value = '';
+        }
 
-    <!-- Change vocabulary book modal -->
-    <div id="changeBookModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="changeBookModalTitle">
-        <div class="modal-backdrop"></div>
-        <div class="modal-panel">
-            <h2 id="changeBookModalTitle">Change vocabulary book</h2>
-            <p class="modal-lead">Select a different book to study.</p>
-            <div id="changeBookModalList" class="book-modal-list"></div>
-            <p id="changeBookModalError" class="auth-error" role="alert"></p>
-            <div class="modal-actions">
-                <button type="button" class="btn" id="changeBookModalCancel">Cancel</button>
-                <button type="button" class="btn btn-primary" id="changeBookModalConfirm">Change</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/data.js"></script>
-    <script src="js/grammar-data.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/presence.js"></script>
-    <script src="js/pwa.js"></script>
-    <script src="js/app.js"></script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch(err => console.error('SW registration failed:', err));
+        }
+    </script>
 </body>
 </html>
