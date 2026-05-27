@@ -8,14 +8,14 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const result = await query('SELECT id, title, author, level, description, cover_url FROM books ORDER BY title');
-    res.json({ books: result.rows });
+    res.json({ books: result.rows || [] });
   } catch (err) {
     console.error('Books fetch error:', err);
-    res.status(500).json({ error: 'Kitoblarni olishda xatolik' });
+    res.status(500).json({ error: 'Kitoblarni olishda xatolik: ' + err.message, books: [] });
   }
 });
 
-// Kitob tanlash (foydalanuvchi uchun)
+// Kitob tanlash
 router.post('/select', auth, async (req, res) => {
   try {
     const { bookId } = req.body;
@@ -25,13 +25,11 @@ router.post('/select', auth, async (req, res) => {
       return res.status(400).json({ error: 'bookId kerak' });
     }
 
-    // Kitob mavjudligini tekshirish
     const book = await query('SELECT id FROM books WHERE id = $1', [bookId]);
     if (book.rows.length === 0) {
       return res.status(404).json({ error: 'Kitob topilmadi' });
     }
 
-    // Tanlangan kitobni saqlash yoki yangilash
     await query(
       `INSERT INTO user_books (user_id, book_id, selected_at) 
        VALUES ($1, $2, NOW())
@@ -43,11 +41,11 @@ router.post('/select', auth, async (req, res) => {
     res.json({ message: 'Kitob muvaffaqiyatli tanlandi', bookId });
   } catch (err) {
     console.error('Book select error:', err);
-    res.status(500).json({ error: 'Kitobni tanlashda xatolik' });
+    res.status(500).json({ error: 'Kitobni tanlashda xatolik: ' + err.message });
   }
 });
 
-// Foydalanuvchining tanlangan kitobi
+// Foydalanuvchining kitobi
 router.get('/my', auth, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -62,7 +60,7 @@ router.get('/my', auth, async (req, res) => {
     res.json({ book: result.rows[0] || null });
   } catch (err) {
     console.error('My book error:', err);
-    res.status(500).json({ error: 'Ma\'lumot olishda xatolik' });
+    res.status(500).json({ error: 'Ma\'lumot olishda xatolik: ' + err.message });
   }
 });
 
