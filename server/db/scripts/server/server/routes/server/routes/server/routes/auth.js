@@ -5,37 +5,59 @@ const jwt = require('jsonwebtoken');
 const { query } = require('../db/connection');
 const router = express.Router();
 
-// Ro'yxatdan o'tish
+// Ro'yxatdan o'tish / Login (birlashtirilgan - nickname uchun)
 router.post('/join', async (req, res) => {
   try {
     const { username, email, password } = req.body;
     
+    // Agar faqat username kelsa (nickname login)
+    if (username && !email && !password) {
+      // Foydalanuvchini topish yoki yaratish
+      let result = await query('SELECT id, username, email FROM users WHERE username = $1', [username]);
+      
+      if (result.rows.length === 0) {
+        // Yangi foydalanuvchi yaratish
+        result = await query(
+          'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email, created_at',
+          [username, `${username.toLowerCase()}@placeholder.local`, 'placeholder_hash']
+        );
+      }
+
+      const user = result.rows[0];
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET || 'muminov_secret_2026',
+        { expiresIn: '30d' }
+      );
+
+      return res.status(200).json({ 
+        message: 'Muvaffaqiyatli', 
+        user: { id: user.id, username: user.username, email: user.email },
+        token 
+      });
+    }
+    
+    // To'liq ro'yxatdan o'tish (email + password)
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'Barcha maydonlarni to\'ldiring' });
     }
 
-    // Email mavjudligini tekshirish
     const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: 'Bu email allaqachon ro\'yxatdan o\'tgan' });
     }
 
-    // Parolni hashlash
     const hashedPassword = await bcrypt.hash(password, 10);
-    
-    // Foydalanuvchini saqlash
     const result = await query(
       'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email, created_at',
       [username, email, hashedPassword]
     );
 
     const user = result.rows[0];
-    
-    // Token yaratish
     const token = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.JWT_SECRET || 'secret_key',
-      { expiresIn: '7d' }
+      process.env.JWT_SECRET || 'muminov_secret_2026',
+      { expiresIn: '30d' }
     );
 
     res.status(201).json({ 
@@ -45,7 +67,7 @@ router.post('/join', async (req, res) => {
     });
   } catch (err) {
     console.error('Auth error:', err);
-    res.status(500).json({ error: 'Server xatoligi' });
+    res.status(500).json({ error: 'Server xatoligi: ' + err.message });
   }
 });
 
@@ -72,8 +94,8 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.JWT_SECRET || 'secret_key',
-      { expiresIn: '7d' }
+      process.env.JWT_SECRET || 'muminov_secret_2026',
+      { expiresIn: '30d' }
     );
 
     res.json({
@@ -83,7 +105,7 @@ router.post('/login', async (req, res) => {
     });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ error: 'Server xatoligi' });
+    res.status(500).json({ error: 'Server xatoligi: ' + err.message });
   }
 });
 
@@ -95,7 +117,7 @@ router.get('/me', async (req, res) => {
     
     if (!token) return res.status(401).json({ error: 'Token yo\'q' });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'muminov_secret_2026');
     const result = await query(
       'SELECT id, username, email, created_at FROM users WHERE id = $1',
       [decoded.id]
@@ -107,7 +129,8 @@ router.get('/me', async (req, res) => {
 
     res.json({ user: result.rows[0] });
   } catch (err) {
-    res.status(401).json({ error: 'Token noto\'g\'ri' });
+    console.error('Auth/me error:', err);
+    res.status(401).json({ error: 'Token noto\'g\'ri yoki muddati o\'tgan' });
   }
 });
 
