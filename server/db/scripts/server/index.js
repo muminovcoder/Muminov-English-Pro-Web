@@ -12,15 +12,18 @@ const { pool } = require('./db/connection');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// CORS - barcha manbalarga ruxsat (development uchun)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Statik fayllar (frontend)
+// JSON parser - katta body uchun
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Statik fayllar
 app.use(express.static(path.join(__dirname, '..')));
 
 // API Routelari
@@ -28,12 +31,22 @@ app.use('/api/auth', authRoutes);
 app.use('/api/books', booksRoutes);
 app.use('/api/presence', presenceRoutes);
 
-// Health check
+// Health check - HAR DOIM JSON qaytaradi
 app.get('/api/health', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// React/SPA fallback - barcha yo'llarni index.html ga yo'naltirish
+// 404 handler - JSON qaytaradi
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    res.status(404).json({ error: 'Endpoint topilmadi' });
+  } else {
+    next();
+  }
+});
+
+// SPA fallback
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'API endpoint topilmadi' });
@@ -41,32 +54,13 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-// Xatoliklarni ushlash
+// Global error handler
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).json({ error: 'Ichki server xatoligi' });
+  console.error('❌ Server error:', err);
+  res.status(500).json({ error: 'Server xatoligi: ' + err.message });
 });
 
-// Serverni ishga tushirish
-async function startServer() {
-  try {
-    // DB ulanishini tekshirish
-    await pool.query('SELECT NOW()');
-    console.log('✅ Database ulandi');
-
-    // Jadvallarni yaratish (agar mavjud bo'lmasa)
-    await initializeDatabase();
-    
-    app.listen(PORT, () => {
-      console.log(`🚀 Server http://localhost:${PORT} da ishlayapti`);
-    });
-  } catch (err) {
-    console.error('❌ Serverni ishga tushirib bo\'lmadi:', err.message);
-    process.exit(1);
-  }
-}
-
-// Database jadvallarini yaratish
+// Database init
 async function initializeDatabase() {
   const tables = [
     `CREATE TABLE IF NOT EXISTS users (
@@ -103,56 +97,51 @@ async function initializeDatabase() {
   for (const sql of tables) {
     await pool.query(sql);
   }
-  console.log('✅ Jadvalar tayyor');
   
-  // Test ma'lumotlari (agar books bo'sh bo'lsa)
+  // Test books
   const count = await pool.query('SELECT COUNT(*) FROM books');
   if (parseInt(count.rows[0].count) === 0) {
     await seedBooks();
   }
 }
 
-// Test kitoblarini qo'shish
 async function seedBooks() {
-  const sampleBooks = [
-    {
-      title: "English for Beginners",
-      author: "John Smith",
-      level: "Beginner",
-      description: "Asosiy ingliz tili qoidalari va so'zlar",
-      cover_url: "https://via.placeholder.com/200x300?text=Beginner"
-    },
-    {
-      title: "Intermediate Grammar",
-      author: "Emma Wilson",
-      level: "Intermediate",
-      description: "O'rta daraja grammatika va muloqot",
-      cover_url: "https://via.placeholder.com/200x300?text=Intermediate"
-    },
-    {
-      title: "Advanced Conversation",
-      author: "Michael Brown",
-      level: "Advanced",
-      description: "Murakkab mavzular va professional muloqot",
-      cover_url: "https://via.placeholder.com/200x300?text=Advanced"
-    }
+  const books = [
+    { title: "Vocabulary for IELTS Advanced", author: "Cambridge", level: "Advanced", description: "IELTS uchun so'z boyligi", cover_url: "" },
+    { title: "Academic English Grammar", author: "Oxford", level: "Intermediate", description: "Akademik grammatika", cover_url: "" },
+    { title: "Business English", author: "Pearson", level: "Intermediate", description: "Biznes ingliz tili", cover_url: "" },
+    { title: "English Pronunciation", author: "BBC", level: "Beginner", description: "Talaffuzni o'rganish", cover_url: "" }
   ];
   
-  for (const book of sampleBooks) {
+  for (const b of books) {
     await pool.query(
-      `INSERT INTO books (title, author, level, description, cover_url) 
-       VALUES ($1, $2, $3, $4, $5)`,
-      [book.title, book.author, book.level, book.description, book.cover_url]
+      `INSERT INTO books (title, author, level, description, cover_url) VALUES ($1, $2, $3, $4, $5)`,
+      [b.title, b.author, b.level, b.description, b.cover_url]
     );
   }
-  console.log('📚 Test kitoblari qo\'shildi');
+}
+
+// Server start
+async function startServer() {
+  try {
+    await pool.query('SELECT 1');
+    console.log('✅ Database ulandi');
+    
+    await initializeDatabase();
+    console.log('✅ Jadvalar tayyor');
+    
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server http://localhost:${PORT} da ishlayapti`);
+    });
+  } catch (err) {
+    console.error('❌ Server xatoligi:', err.message);
+    process.exit(1);
+  }
 }
 
 startServer();
 
-// To'xtatish signallari
 process.on('SIGINT', async () => {
-  console.log('\n🔄 Server to\'xtatilmoqda...');
   await pool.end();
   process.exit(0);
 });
